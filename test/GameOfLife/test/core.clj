@@ -3,7 +3,7 @@
   (:use [clojure.test]))
 
 
-(def empty-board (get-column-of-size 10))
+(def empty-board (get-board 10 10))
 (def board-0-0 (make-cell-alive empty-board 0 0))
 (def board-0-0-1-1 (make-cell-alive board-0-0 1 1))
 (def board-1-0 (make-cell-alive empty-board 1 0))
@@ -32,32 +32,6 @@
   (def row (get-row-of-size 10))
   (is (= false (first row)))
   )
-
-(deftest get-column-of-0-rows
-  (def column (get-column-of-size 0))
-  (is (= (count column) 0))
-  )
-
-(deftest get-column-of-1-rows
-  (def column (get-column-of-size 1))
-  (is (= (count column) 1))
-  )
-
-(deftest get-column-of-10-rows
-  (def column (get-column-of-size 10))
-  (is (= (count column) 10))
-  )
-
-(deftest assert-columns-contain-rows
-  (def column (get-column-of-size 10))
-  (is (= (first (first column)) false))
-  )
-
-(deftest asseert-rows-same-size-as-columns
-  (def column (get-column-of-size 10))
-  (is (= (count (first column)) (count column)))
-  )
-
 (deftest first-cell-in-row-can-be-made-alive
   (def empty-row (get-row-of-size 10))
   (def row (make-row-cell-alive empty-row 0))
@@ -76,6 +50,26 @@
   (is (= true (nth row 9)))
   )
 
+(deftest get-column-of-0-rows
+  (def column (get-board 0 0))
+  (is (= (count column) 0))
+  )
+
+(deftest get-column-of-1-rows
+  (def column (get-board 1 1))
+  (is (= (count column) 1))
+  )
+
+(deftest get-column-of-10-rows
+  (def column (get-board 10 10))
+  (is (= (count column) 10))
+  )
+
+(deftest assert-columns-contain-rows
+  (def column (get-board 10 10))
+  (is (= (first (first column)) false))
+  )
+
 (deftest top-left-cell-can-be-made-alive
   (def board (make-cell-alive empty-board 0 0))
   (is (= true (first (first board))))
@@ -84,6 +78,17 @@
 (deftest middle-cell-can-be-made-alive
   (def board (make-cell-alive empty-board 5 6))
   (is (= true (get-cell board 5 6)))
+  )
+
+(deftest board-with-live-cell-at-startup
+  (def board-init-0-0 (get-board-with-cells 10 10 '(0 0)))
+  (is (= true (get-cell board-init-0-0 0 0)))
+  )
+
+(deftest board-with-2-live-cell-at-startup
+  (def board-init-0-0-1-1 (get-board-with-cells 10 10 '(0 0 1 1)))
+  (is (= true (get-cell board-init-0-0-1-1 0 0)))
+  (is (= true (get-cell board-init-0-0-1-1 1 1)))
   )
 
 (deftest assert-cell-is-not-alive
@@ -136,7 +141,9 @@
 
 (deftest assert-cell-has-neighbour-on-top-right
   (is (= 1 (get-neighbours board-5-5 4 6)))
-  )(deftest assert-cell-has-neighbour-on-bottom-left
+  )
+
+(deftest assert-cell-has-neighbour-on-bottom-left
   (is (= 1 (get-neighbours board-5-5 6 4)))
   )
 
@@ -164,20 +171,20 @@
   (is (= empty-board (get-next-board-recursive empty-board empty-board 10 10 0 0)))
   )
 
-(deftest get-next-board-were-cell-0-0-has-3-neighbours-returns-single-cell-board
-  (def board-1-0-0-1 (make-cell-alive board-1-0 0 1))
-  (def board-1-0-0-1-1-1 (make-cell-alive board-1-0-0-1 1 1))
-  (is (= board-0-0 (get-next-board-recursive board-1-0-0-1-1-1 empty-board 10 10 0 0)))
+(deftest test-flip-flop
+  (def board-1-2-2-2-3-2 (get-board-with-cells 10 10 '(1 2 2 2 3 2)))
+  (def board-2-1-2-2-2-3 (get-board-with-cells 10 10 '(2 1 2 2 2 3)))
+  (is (= board-2-1-2-2-2-3 (get-next-board board-1-2-2-2-3-2)))
   )
 
 (deftest get-next-board-recursive-when-living-cell-not-current-x
   (def board-0-0-2-0-1-1 (make-cell-alive board-0-0-1-1 2 0))
-  (def board-1-0 (make-cell-alive empty-board 1 0))
+  (def board-1-0 (get-board-with-cells 10 10 '(1 0 1 1)))
   (is (= board-1-0 (get-next-board-recursive board-0-0-2-0-1-1 empty-board 10 10 0 0)))
   )
 
 (deftest get-next-board-recursive-when-living-cell-not-current-y
   (def board-0-0-1-1-0-2 (make-cell-alive board-0-0-1-1 0 2))
-  (def board-0-1 (make-cell-alive empty-board 0 1))
+  (def board-0-1 (get-board-with-cells 10 10 '(0 1 1 1)))
   (is (= board-0-1 (get-next-board-recursive board-0-0-1-1-0-2 empty-board 10 10 0 0)))
   )
