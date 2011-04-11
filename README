@@ -4,6 +4,8 @@ An implementation of Conway's Game Of Life in Clojure.
 Plenty of improvements which can (but probably won't) be made.
 Run using Leinegen with the command "lein run".
 
+Install Leiningen by following the Install Instructiong on the following url (PS: scroll the page). https://github.com/technomancy/leiningen
+
 ## Usage
 
 FIXME: write
