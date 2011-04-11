@@ -1,6 +1,8 @@
 # GameOfLife
 
-FIXME: write description
+An implementation of Conway's Game Of Life in Clojure.
+Plenty of improvements which can (but probably won't) be made.
+Run using Leinegen with the command "lein run".
 
 ## Usage
 
